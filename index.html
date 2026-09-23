@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Generador de especificaciones de producto</title>
+<style>
+  body{font-family:system-ui,sans-serif;max-width:720px;margin:40px auto;padding:0 20px;background:#F4F7FB;color:#0B2A6B}
+  h1{font-size:28px}
+  textarea{width:100%;height:90px;padding:12px;font-size:16px;border-radius:10px;border:1px solid #DCE4EE;font-family:inherit}
+  button{margin-top:12px;padding:12px 24px;background:#2F6BFF;color:#fff;border:none;border-radius:999px;font-size:16px;cursor:pointer}
+  button:disabled{opacity:.5;cursor:default}
+  #resultado{margin-top:28px;white-space:pre-wrap;line-height:1.6}
+  .error{color:#c0392b}
+</style>
+</head>
+<body>
+  <h1>Generador de especificaciones de producto</h1>
+  <p>Escribe una idea de producto en una frase. La IA generará historias de usuario, criterios de aceptación y un mini roadmap.</p>
+
+  <textarea id="idea" placeholder="Ej: quiero un filtro de precios en una tienda online"></textarea>
+  <br>
+  <button id="btn" onclick="generar()">Generar especificación</button>
+
+  <div id="resultado"></div>
+
+  <script>
+    async function generar() {
+      const idea = document.getElementById('idea').value.trim();
+      const boton = document.getElementById('btn');
+      const resultado = document.getElementById('resultado');
+
+      if (!idea) {
+        resultado.innerHTML = '<p class="error">Escribe una idea primero.</p>';
+        return;
+      }
+
+      boton.disabled = true;
+      boton.textContent = 'Generando...';
+      resultado.textContent = '';
+
+      try {
+        const respuesta = await fetch('/api/generar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idea })
+        });
+
+        if (!respuesta.ok) throw new Error('Error del servidor');
+
+        const datos = await respuesta.json();
+        resultado.textContent = datos.texto;
+
+      } catch (error) {
+        resultado.innerHTML = '<p class="error">Algo ha fallado. Inténtalo de nuevo.</p>';
+      } finally {
+        boton.disabled = false;
+        boton.textContent = 'Generar especificación';
+      }
+    }
+  </script>
+</body>
+</html>
