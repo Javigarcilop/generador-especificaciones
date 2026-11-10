@@ -1,5 +1,6 @@
-# Generador de especificaciones de producto
+# Pauta
 
+**Generador de especificaciones de producto.** 
 Escribes una idea de producto en una frase y la IA genera historias de usuario, criterios de aceptación y un mini roadmap. Pensado para el primer paso de definición de producto, antes de que un equipo empiece a programar.
 
 **Demo:** https://generador-especificaciones.vercel.app
