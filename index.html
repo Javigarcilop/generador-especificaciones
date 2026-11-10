@@ -4,60 +4,65 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pauta · de la idea a la especificación</title>
-<style>
-  body{font-family:system-ui,sans-serif;max-width:720px;margin:40px auto;padding:0 20px;background:#F4F7FB;color:#0B2A6B}
-  h1{font-size:28px}
-  textarea{width:100%;height:90px;padding:12px;font-size:16px;border-radius:10px;border:1px solid #DCE4EE;font-family:inherit}
-  button{margin-top:12px;padding:12px 24px;background:#2F6BFF;color:#fff;border:none;border-radius:999px;font-size:16px;cursor:pointer}
-  button:disabled{opacity:.5;cursor:default}
-  #resultado{margin-top:28px;white-space:pre-wrap;line-height:1.6}
-  .error{color:#c0392b}
-</style>
+<meta name="description" content="Describe una idea de producto y Pauta la convierte en historias de usuario, criterios de aceptación y un plan en tres fases.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilos.css">
 </head>
 <body>
-  <h1>Pauta</h1>
-  <p>Escribe una idea de producto en una frase. La IA generará historias de usuario, criterios de aceptación y un mini roadmap.</p>
+<header class="barra">
+  <a class="marca" href="./" aria-label="Pauta, inicio">
+    <svg width="30" height="22" viewBox="0 0 30 22" aria-hidden="true">
+      <g stroke="currentColor" stroke-width="1.2"><path d="M0 2h30M0 6.5h30M0 11h30M0 15.5h30M0 20h30"/></g>
+      <ellipse cx="19" cy="11" rx="4" ry="3" transform="rotate(-20 19 11)" fill="var(--acento)"/>
+    </svg>
+    <span>Pauta</span>
+  </a>
+  <nav class="enlaces">
+    <a href="#como">Cómo funciona</a>
+    <a href="https://github.com/Javigarcilop/generador-especificaciones" rel="noopener">Código</a>
+  </nav>
+</header>
 
-  <textarea id="idea" placeholder="Ej: quiero un filtro de precios en una tienda online"></textarea>
-  <br>
-  <button id="btn" onclick="generar()">Generar especificación</button>
+<main class="pagina">
+  <section class="redactar">
+    <h1>¿Qué quieres construir?</h1>
+    <p class="entradilla">Cuéntalo en una o dos frases. Pauta lo convierte en historias de usuario, criterios de aceptación y un plan en tres fases, listo para llevar a tu equipo.</p>
 
-  <div id="resultado"></div>
+    <form id="formulario" novalidate>
+      <label class="oculto" for="idea">Idea de producto</label>
+      <div class="hoja">
+        <textarea id="idea" rows="3" maxlength="500" placeholder="Un filtro de precios para la tienda online que recuerde la última búsqueda del cliente"></textarea>
+        <div class="hoja-pie">
+          <span class="contador" id="contador">0 / 500</span>
+          <span class="atajo"><kbd>Ctrl</kbd> + <kbd>Intro</kbd></span>
+          <button class="boton" id="generar" type="submit">Generar especificación</button>
+        </div>
+      </div>
+      <p class="sugerencias">
+        <span>¿Sin idea a mano?</span>
+        <button type="button" data-idea="Reservas de mesa para un restaurante pequeño, con confirmación por WhatsApp">Reservas por WhatsApp</button>
+        <button type="button" data-idea="Un panel para que un gimnasio vea qué clases se llenan y cuáles no">Ocupación de clases</button>
+        <button type="button" data-idea="Que los clientes de una tienda online puedan devolver un pedido sin escribir a soporte">Devoluciones sin soporte</button>
+      </p>
+    </form>
+  </section>
 
-  <script>
-    async function generar() {
-      const idea = document.getElementById('idea').value.trim();
-      const boton = document.getElementById('btn');
-      const resultado = document.getElementById('resultado');
+  <section id="resultado" class="resultado" aria-live="polite"></section>
+</main>
 
-      if (!idea) {
-        resultado.innerHTML = '<p class="error">Escribe una idea primero.</p>';
-        return;
-      }
+<footer class="pie" id="como">
+  <ol class="pasos">
+    <li><b>Describes la idea</b> con tus palabras, sin plantillas.</li>
+    <li><b>Gemini la estructura</b> siguiendo un esquema fijo, y el servidor comprueba el resultado antes de enseñártelo.</li>
+    <li><b>Revisas y te la llevas</b>: marca los criterios que validas y copia el documento en Markdown.</li>
+  </ol>
+  <p class="nota">La clave de la API vive en el servidor, nunca en el navegador. Hecho por <a href="https://javigarcilop.github.io/">Javi García</a>.</p>
+</footer>
 
-      boton.disabled = true;
-      boton.textContent = 'Generando...';
-      resultado.textContent = '';
-
-      try {
-        const respuesta = await fetch('/api/generar', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ idea })
-        });
-
-        if (!respuesta.ok) throw new Error('Error del servidor');
-
-        const datos = await respuesta.json();
-        resultado.textContent = datos.texto;
-
-      } catch (error) {
-        resultado.innerHTML = '<p class="error">Algo ha fallado. Inténtalo de nuevo.</p>';
-      } finally {
-        boton.disabled = false;
-        boton.textContent = 'Generar especificación';
-      }
-    }
-  </script>
+<div class="aviso-flotante" id="aviso" role="status"></div>
+<script src="app.js"></script>
 </body>
 </html>
